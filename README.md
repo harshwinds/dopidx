@@ -27,3 +27,5 @@ An in-memory persistence was selected due to unknown system requirements and the
 Due to the limitation of no third party libraries, System.out.println was used for logging.  Code used for troubleshooting has been commented out.  A logging library would have allowed the log levels be modified via configuration rather than code modification.
 
 While not required, and this project was simple enough, use of some type of dependency injection like Spring or Guice would have allowed for dependencies to be injected into the Command implementations and not have to be passed along from the Server and Worker classes.
+
+Finally, the assumption is that the packages dependencies do not change after being indexed.
