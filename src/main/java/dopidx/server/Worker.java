@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import dopidx.command.CommandInvoker;
 import dopidx.message.Message;
@@ -16,6 +18,8 @@ import dopidx.message.MessageParser;
  * Thread to handle each client connected to the {@link Server}
  */
 public class Worker implements Runnable {
+	
+	private static final Logger LOG = Logger.getLogger(Worker.class.getName());
 	
 	private final Socket client;
 	private final MessageParser messageParser;
@@ -33,7 +37,7 @@ public class Worker implements Runnable {
 	 */
 	public void run() {
 		UUID clientId = UUID.randomUUID();
-		// System.out.println("[Handling requests from client " + clientId.toString() + "]");
+		LOG.log(Level.FINE, "Handling requests from client " + clientId.toString());
 		
 		try (InputStream input = client.getInputStream();
 			 Scanner scanner = new Scanner(input, StandardCharsets.UTF_8.name());
@@ -42,18 +46,19 @@ public class Worker implements Runnable {
 			scanner.useDelimiter("\\n");
 			
 			while (scanner.hasNext()) {
-				// UUID requestId = UUID.randomUUID();
+				UUID requestId = UUID.randomUUID();
+				
 				String messageStr = scanner.nextLine();
-				// System.out.println(clientId.toString() + ": " + requestId.toString() + ": " + messageStr);
+				LOG.log(Level.FINER, clientId.toString() + ": " + requestId.toString() + ": " + messageStr);
 				Message message = messageParser.parseMessage(messageStr);
-				// System.out.println(clientId.toString() + ": " + requestId.toString() + ": " + message);
+				LOG.log(Level.FINER, clientId.toString() + ": " + requestId.toString() + ": " + message);
 				
 				ResponseCode response = execute(message);
-				// System.out.println(clientId.toString() + ": " + requestId.toString() + ": " + response);
+				LOG.log(Level.FINER, clientId.toString() + ": " + requestId.toString() + ": " + response);
 				output.println(response.name());
 			}
 		} catch (IOException e) {
-			System.out.println("ERROR: " + clientId.toString() + ": " + e.getMessage());
+			LOG.log(Level.SEVERE, clientId.toString(), e);
 		} finally {
 			if (client != null) {
 				try {
@@ -64,7 +69,7 @@ public class Worker implements Runnable {
 			}
 		}
 		
-		// System.out.println("[Finished processing requests from client " + clientId.toString() + "]");
+		LOG.log(Level.FINE, "Finished processing requests from client " + clientId.toString());
 	}
 	
 	protected ResponseCode execute(Message message) {
