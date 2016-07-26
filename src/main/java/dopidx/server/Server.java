@@ -18,7 +18,7 @@ public class Server implements Runnable {
 	protected final MessageParser messageParser;
 	protected final CommandInvoker commandInvoker;
 	
-	protected boolean running; // TODO AtomicBoolean? then shrink sync blocks? 
+	protected boolean running;
 	protected ServerSocket socket;
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(100);
 	
@@ -32,11 +32,12 @@ public class Server implements Runnable {
 	 * Runs the server
 	 */
 	public void run() {
+		Socket client = null;
+		
 		try {
 			start();
 			
 			while (isRunning()) {
-				Socket client = null;
 				try {
 					client = socket.accept();
 					this.threadPool.execute((new Worker(client, messageParser, commandInvoker)));
@@ -50,6 +51,15 @@ public class Server implements Runnable {
 			throw new RuntimeException("Unexpected error", e);
 		} finally {
 			this.threadPool.shutdown();
+			
+			if (client != null) {
+				try {
+					client.close();
+				} catch (IOException e) {
+					// OK. Cleaning up
+				}
+			}
+			
 			stop();
 		}
 	}

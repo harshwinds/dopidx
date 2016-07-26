@@ -1,3 +1,7 @@
+/.settings/
 /target/
+/bin/
 /INSTRUCTIONS.md
 /TODO
+.classpath
+.project

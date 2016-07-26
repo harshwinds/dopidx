@@ -66,10 +66,12 @@ public class Worker implements Runnable {
 				scanner.close(); // also closes input
 			}
 			
-			try {
-				client.close();
-			} catch (IOException e) {
-				// Ok.  Cleaning up
+			if (client != null) {
+				try {
+					client.close();
+				} catch (IOException e) {
+					// OK. Cleaning up
+				}
 			}
 		}
 		
