@@ -37,7 +37,7 @@ public class Worker implements Runnable {
 	 */
 	public void run() {
 		UUID clientId = UUID.randomUUID();
-		LOG.log(Level.FINE, "Handling requests from client " + clientId.toString());
+		LOG.log(Level.INFO, "Handling requests from client " + clientId.toString());
 		
 		try (InputStream input = client.getInputStream();
 			 Scanner scanner = new Scanner(input, StandardCharsets.UTF_8.name());
@@ -49,12 +49,12 @@ public class Worker implements Runnable {
 				UUID requestId = UUID.randomUUID();
 				
 				String messageStr = scanner.nextLine();
-				LOG.log(Level.FINER, clientId.toString() + ": " + requestId.toString() + ": " + messageStr);
+				LOG.log(Level.INFO, clientId.toString() + ": " + requestId.toString() + ": " + messageStr);
 				Message message = messageParser.parseMessage(messageStr);
-				LOG.log(Level.FINER, clientId.toString() + ": " + requestId.toString() + ": " + message);
+				LOG.log(Level.INFO, clientId.toString() + ": " + requestId.toString() + ": " + message);
 				
 				ResponseCode response = execute(message);
-				LOG.log(Level.FINER, clientId.toString() + ": " + requestId.toString() + ": " + response);
+				LOG.log(Level.INFO, clientId.toString() + ": " + requestId.toString() + ": " + response);
 				output.println(response.name());
 			}
 		} catch (IOException e) {
@@ -69,7 +69,7 @@ public class Worker implements Runnable {
 			}
 		}
 		
-		LOG.log(Level.FINE, "Finished processing requests from client " + clientId.toString());
+		LOG.log(Level.INFO, "Finished processing requests from client " + clientId.toString());
 	}
 	
 	protected ResponseCode execute(Message message) {

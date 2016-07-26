@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import dopidx.command.CommandInvoker;
 import dopidx.message.MessageParser;
@@ -14,6 +16,8 @@ import dopidx.message.MessageParser;
  * TCP Server that listens for messages for the package indexer.
  */
 public class Server implements Runnable {
+	
+	private static final Logger LOG = Logger.getLogger(Server.class.getName());
 	
 	protected final int port;
 	protected final MessageParser messageParser;
@@ -79,8 +83,10 @@ public class Server implements Runnable {
 	protected void start() {
 		if (!running.get() && initializing.compareAndSet(false, true)) {
 			try {
+	        	LOG.log(Level.INFO, "Starting server...");
 				this.socket = new ServerSocket(port);
 				running.set(true);
+	        	LOG.log(Level.INFO, "...server successfully started.");
 			} catch (IOException e) {
 				throw new RuntimeException("Failed to start server", e);
 			} finally {
@@ -95,7 +101,9 @@ public class Server implements Runnable {
 	public void stop() {
 		if (running.compareAndSet(true, false)) {
 			try {
+				LOG.log(Level.INFO, "Stopping server...");
 				this.socket.close();
+				LOG.log(Level.INFO, "...server successfully stopped.");
 			} catch (IOException e) {
 				running.set(true);
 				throw new RuntimeException("Failed to stop server", e);

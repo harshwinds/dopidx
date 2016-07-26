@@ -10,15 +10,9 @@ mvn package
 java -jar target/dopidx-1.0.0-SNAPSHOT-jar-with-dependencies.jar 
 ```
 
-For alternate logging:
-```
-java -Djava.util.logging.config.file=logging.properties -jar target/dopidx-1.0.0-SNAPSHOT-jar-with-dependencies.jar 
-```
-
-Logging levels can be varied by modifying logging.properties and setting dopidx.server.Worker.level to one of INFO, FINE or FINER.
-
-## Runtime Requirements
+## Build / Runtime Requirements
 Java 8
+Maven 3.3.9
 
 ## Design Rationale
 I selected Java as the language because I could leverage my experience and it also allowed me to complete this exercise in the time I had available.
