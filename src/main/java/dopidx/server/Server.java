@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import dopidx.command.CommandInvoker;
 import dopidx.message.MessageParser;
@@ -18,7 +19,8 @@ public class Server implements Runnable {
 	protected final MessageParser messageParser;
 	protected final CommandInvoker commandInvoker;
 	
-	protected boolean running;
+	protected AtomicBoolean initializing = new AtomicBoolean(false);
+	protected AtomicBoolean running = new AtomicBoolean(false);
 	protected ServerSocket socket;
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(100);
 	
@@ -67,31 +69,35 @@ public class Server implements Runnable {
 	/**
 	 * Indicates if the server is running
 	 */
-	public synchronized boolean isRunning() {
-		return running;
+	public boolean isRunning() {
+		return running.get();
 	}
 	
 	/**
 	 * Starts the server on the specified port
 	 */
-	protected synchronized void start() {
-		try {
-			this.socket = new ServerSocket(port);
-			this.running = true;
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to start server", e);
+	protected void start() {
+		if (!running.get() && initializing.compareAndSet(false, true)) {
+			try {
+				this.socket = new ServerSocket(port);
+				running.set(true);
+			} catch (IOException e) {
+				throw new RuntimeException("Failed to start server", e);
+			} finally {
+				initializing.set(false);
+			}
 		}
 	}
 	
 	/**
 	 * Stops the server
 	 */
-	public synchronized void stop() {
-		if  (running) {
+	public void stop() {
+		if (running.compareAndSet(true, false)) {
 			try {
 				this.socket.close();
-				this.running = false;
 			} catch (IOException e) {
+				running.set(true);
 				throw new RuntimeException("Failed to stop server", e);
 			}
 		}
