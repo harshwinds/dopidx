@@ -35,15 +35,12 @@ public class Worker implements Runnable {
 		UUID clientId = UUID.randomUUID();
 		// System.out.println("[Handling requests from client " + clientId.toString() + "]");
 		
-		InputStream input = null;
-		PrintWriter output = null;
-		Scanner scanner = null;
-		try {
-			input = client.getInputStream();
-			scanner = new Scanner(input, StandardCharsets.UTF_8.name());
+		try (InputStream input = client.getInputStream();
+			 Scanner scanner = new Scanner(input, StandardCharsets.UTF_8.name());
+			 PrintWriter output = new PrintWriter(client.getOutputStream(), true);) {
+			
 			scanner.useDelimiter("\\n");
 			
-			output = new PrintWriter(client.getOutputStream(), true);
 			while (scanner.hasNext()) {
 				// UUID requestId = UUID.randomUUID();
 				String messageStr = scanner.nextLine();
@@ -58,14 +55,6 @@ public class Worker implements Runnable {
 		} catch (IOException e) {
 			System.out.println("ERROR: " + clientId.toString() + ": " + e.getMessage());
 		} finally {
-			if (output != null) {
-				output.close();
-			}
-			
-			if (scanner != null) {
-				scanner.close(); // also closes input
-			}
-			
 			if (client != null) {
 				try {
 					client.close();

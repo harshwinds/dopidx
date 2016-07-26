@@ -40,7 +40,7 @@ public class Server implements Runnable {
 			while (isRunning()) {
 				try {
 					client = socket.accept();
-					this.threadPool.execute((new Worker(client, messageParser, commandInvoker)));
+					this.threadPool.execute((new Worker(client, messageParser, commandInvoker))); // Worker handles closing individual Sockets
 				} catch (IOException e) {
 					if (isRunning()) {
 						throw new RuntimeException("Failed to accept connection", e);	

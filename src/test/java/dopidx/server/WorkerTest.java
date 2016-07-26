@@ -74,13 +74,5 @@ public class WorkerTest {
 		
 		assertEquals(ResponseCode.FAIL, response);
 	}
-	
-	@Test
-	public void verifyStreamsClosed() throws IOException {
-		worker.run();
-		
-		verify(outputStream).close();
-		verify(inputStream).close();
-	}
 
 }
