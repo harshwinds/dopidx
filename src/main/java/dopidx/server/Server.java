@@ -18,7 +18,7 @@ public class Server implements Runnable {
 	protected final MessageParser messageParser;
 	protected final CommandInvoker commandInvoker;
 	
-	protected boolean running;
+	protected boolean running; // TODO AtomicBoolean? then shrink sync blocks? 
 	protected ServerSocket socket;
 	protected ExecutorService threadPool = Executors.newFixedThreadPool(100);
 	

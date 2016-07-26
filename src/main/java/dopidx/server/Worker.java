@@ -65,6 +65,12 @@ public class Worker implements Runnable {
 			if (scanner != null) {
 				scanner.close(); // also closes input
 			}
+			
+			try {
+				client.close();
+			} catch (IOException e) {
+				// Ok.  Cleaning up
+			}
 		}
 		
 		// System.out.println("[Finished processing requests from client " + clientId.toString() + "]");
