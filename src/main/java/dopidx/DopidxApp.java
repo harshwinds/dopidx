@@ -17,7 +17,7 @@ import dopidx.server.Server;
  */
 public class DopidxApp {
 	
-	private static final Logger LOG = Logger.getLogger(DopidxApp.class.getName());
+    private static final Logger LOG = Logger.getLogger(DopidxApp.class.getName());
 	
     public static void main(String[] args) {    	
         LOG.log(Level.INFO, "Initializing dopidx...");
