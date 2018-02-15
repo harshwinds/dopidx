@@ -40,7 +40,7 @@ public class DopidxApp {
         });
         
         try {
-        	new Thread(server).start();
+            new Thread(server).start();
         } catch (Exception e) {
         	LOG.log(Level.SEVERE, "Server error", e);
         }
